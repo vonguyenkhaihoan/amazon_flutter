@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:amazon_flutter/common/widgets/bottom_bar.dart';
 import 'package:amazon_flutter/config/config.dart';
 import 'package:amazon_flutter/constains/error_handling.dart';
 import 'package:amazon_flutter/constains/utils.dart';
@@ -10,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class AuthService {
   //ham dang ky nguoi dung
@@ -79,9 +79,50 @@ class AuthService {
           Provider.of<UserProvider>(context, listen: false).setUser(res.body);
           // Navigator.pushNamed(context, HomeScreen.routeName);
           Navigator.pushNamedAndRemoveUntil(
-              context, HomeScreen.routeName, (route) => false);
+              context, BottomBar.routeName, (route) => false);
         },
       );
+    } catch (err) {
+      showSnackBar(context, err.toString(), Colors.yellow);
+    }
+  }
+
+  //ham lay thong tin nguoi dùng
+  void getUserData(
+    BuildContext context,
+  ) async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('x-auth-token');
+
+      // kiem tra token
+      if (token == null) {
+        prefs.setString('x-auth-token', '');
+      }
+
+      var tokenRes = await http.post(
+        Uri.parse(tokenValid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token!
+        },
+      );
+
+      var response = jsonDecode(tokenRes.body);
+
+      if (response == true) {
+        //get user
+        http.Response userRes = await http.get(
+          Uri.parse(user),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+            'x-auth-token': token
+          },
+        );
+
+        var userProvider = Provider.of<UserProvider>(context, listen: false);
+        userProvider.setUser(userRes.body);
+      }
     } catch (err) {
       showSnackBar(context, err.toString(), Colors.yellow);
     }

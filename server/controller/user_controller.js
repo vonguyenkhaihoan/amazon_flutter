@@ -61,6 +61,25 @@ class UserController {
       res.status(500).json({ error: e.message });
     }
   }
+
+  //token
+  async token(req, res) {
+    try {
+
+      const token = req.header('x-auth-token');
+
+      //kiem tra ma token co duoc thong qua hay la null
+      if(!token)  return res.json(false);
+      const verified = jwt.verify(token, "passwordKey");
+      if (!verified) return res.json(false);
+  
+      const user = await UserModel.findById(verified.id);
+      if (!user) return res.json(false);
+      res.json(true);
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
+  }
 }
 
 module.exports = new UserController();

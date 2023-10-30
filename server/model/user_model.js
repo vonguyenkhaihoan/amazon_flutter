@@ -32,8 +32,18 @@ const UserSchema = mongoose.Schema({
     type: String,
     default: "user",
   },
-
-});
+ 
+} ,{ timestamps: true }
+// ,{
+//   toJSON:{
+//     tranfrom: function(doc, ret){
+//       ret.authId = ret._id.toString();
+//       delete ret._id;
+//       delete ret._v;
+//     }
+//   }
+// }
+);
 
 const UserModle = mongoose.model("User", UserSchema);
 module.exports = UserModle;
