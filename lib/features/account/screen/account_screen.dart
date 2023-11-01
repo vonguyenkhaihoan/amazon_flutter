@@ -48,6 +48,8 @@ class AccountScreen extends StatelessWidget {
           ),
         ),
       ),
+
+      //body
       body: Column(
         children: const [
           BelowAppBar(),
