@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:amazon_flutter/config/config.dart';
@@ -85,7 +86,7 @@ class AdminServices {
 
       for (int i = 0; i < images.length; i++) {
         CloudinaryResponse res = await cloudinary.uploadFile(
-          CloudinaryFile.fromFile(images[i].path, folder: name),
+          CloudinaryFile.fromFile(images[i].path, folder: "product/" + name),
         );
         imageUrls.add(res.secureUrl);
       }
@@ -113,13 +114,81 @@ class AdminServices {
         context: context,
         onSuccess: () {
           Navigator.pop(context);
-          showSnackBar(context, 'Product Added Successfully!',Colors.green);
-
+          showSnackBar1(context, 'Product Added Successfully!');
         },
       );
     } catch (e) {
-      showSnackBar(context, e.toString(),const Color.fromARGB(255, 161, 117, 113));
+      showSnackBar(
+          context, e.toString(), const Color.fromARGB(255, 161, 117, 113));
     }
   }
 
+  //get all product
+  Future<List<Product>> fetchAllProducts(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    //tao bien luu danh sach san pham
+    List<Product> productList = [];
+
+    try {
+      http.Response res = await http.get(Uri.parse(getAllProduct), headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': userProvider.user.token,
+      });
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          //chay vong lap san pham lays tudb
+          for (int i = 0; i < jsonDecode(res.body).length; i++) {
+            //them vao danh sach san pham
+            productList.add(
+              Product.fromJson(
+                jsonEncode(
+                  jsonDecode(res.body)[i],
+                ),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString(), Colors.red);
+    }
+    return productList;
+  }
+
+  //delete Product
+  void deleteProduct({
+    required BuildContext context,
+    required Product product,
+    required VoidCallback onSuccess,
+  }) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    try {
+      http.Response res = await http.post(
+        Uri.parse(deleteProducts),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+        body: jsonEncode({
+          'id': product.id,
+        }),
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          onSuccess();
+        },
+      );
+    } catch (e) {
+      showSnackBar(
+          context, e.toString(), const Color.fromARGB(255, 161, 117, 113));
+    }
+  }
 }

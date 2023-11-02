@@ -86,6 +86,8 @@ class _AddProductScreenState extends State<AddProductScreen> {
           ),
         ),
       ),
+      
+      //body
       body: SingleChildScrollView(
         child: Form(
           key: _addProductFormKey,
