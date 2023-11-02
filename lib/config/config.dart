@@ -7,3 +7,7 @@ const tokenValid = "$url/api/tokenIsValid";
 //user
 const user = "$url/";
 
+//admin
+const addProduct = "$url/admin/add-product";
+
+

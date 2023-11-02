@@ -28,10 +28,10 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       );
 
     //ADD PRODUCT
-    case AddproductScreen.routeName:
+    case AddProductScreen.routeName:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => const AddproductScreen(),
+        builder: (_) => const AddProductScreen(),
       );
 
     default:

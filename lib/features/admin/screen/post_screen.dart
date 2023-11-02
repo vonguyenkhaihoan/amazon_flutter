@@ -10,7 +10,7 @@ class PostScren extends StatefulWidget {
 
 class _PostScrenState extends State<PostScren> {
   void navigateToAddProduct() {
-    Navigator.pushNamed(context, AddproductScreen.routeName);
+    Navigator.pushNamed(context, AddProductScreen.routeName);
   }
 
   @override

@@ -61,6 +61,15 @@ void showSnackBar(BuildContext context, String text, Color color) {
   );
 }
 
+
+void showSnackBar1(BuildContext context, String text) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(text),
+    ),
+  );
+}
+
 // hàm hconj hình ảnh
 Future<List<File>> pickImages() async {
   List<File> images = [];
