@@ -19,5 +19,6 @@ const ProductController = require("../controller/product_controller")
 //     }
 //   });
 router.get("/api/products", AuthMidd , ProductController.getProduct);
+router.get("/api/products/search/:name", AuthMidd, ProductController.searchProduct);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const ProductModel = require("../model/product_model");
 
 
 class ProductController{
-     async getProduct (req, res)  {
+    async getProduct (req, res)  {
         try {
             console.log(req.query.category);
     
@@ -15,6 +15,19 @@ class ProductController{
             res.status(500).json({ error: e.message });
         }
     }
+
+    async searchProduct (req, res)  {
+        try {
+          const products = await ProductModel.find({
+            name: { $regex: req.params.name, $options: "i" },
+          });
+      
+          res.json(products);
+        } catch (e) {
+          res.status(500).json({ error: e.message });
+        }
+      }
+
 }
 
 module.exports = new  ProductController();
