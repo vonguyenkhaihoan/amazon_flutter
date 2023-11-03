@@ -1,7 +1,9 @@
 const express = require('express');
 
 const userRouter = require('./routers/auth_route');
-const AdminRouter = require('./routers/admin_router');
+const AdminRouter = require('./routers/admin_route');
+const ProductRouter = require('./routers/product_route');
+
 
 
 
@@ -12,6 +14,8 @@ app.use(express.json());
 
 app.use(userRouter);
 app.use(AdminRouter);
+app.use(ProductRouter);
+
 
 
 
