@@ -96,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
-      
+
       //body
       body: SingleChildScrollView(
         child: Column(
@@ -108,6 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
             CarouselImage(),
             SizedBox(height: 10),
             DealOfDay(),
+            SizedBox(height: 10),
           ],
         ),
       ),

@@ -9,7 +9,9 @@ class UserProvider extends ChangeNotifier{
       password: '',
       address: '',
       type: '',
-      token: '');
+      token: '',
+      cart: [],
+      );
 
   // lay user
   User get user => _user;
@@ -17,6 +19,14 @@ class UserProvider extends ChangeNotifier{
   //dat lai gia tri user
   void setUser(String user) {
     _user = User.fromJson(user);
+    notifyListeners();
+  }
+
+  // dat lai mo hinh nguoi dung
+  void setUserFromModel(User user) {
+     // Gán đối tượng người dùng mới cho trường riêng
+    _user = user;
+    // Thông báo cho bất kỳ trình nghe nào về thay đổi
     notifyListeners();
   }
 }

@@ -1,4 +1,4 @@
-const url = 'http://192.168.1.4:3000';
+const url = 'http://192.168.1.5:3000';
 
 const signup = "$url/api/signup";
 const signin = "$url/api/signin";
@@ -10,6 +10,13 @@ const user = "$url/";
 //api
 const apiProducts = "$url/api/products";
 const apirateProducts = "$url/api/rate-product";
+const apidealofdayProducts = "$url/api/deal-of-day";
+const apiTopRateProducts = "$url/api/top-rate";
+const apiAddToCart = "$url/api/add-to-cart";
+const apiRemoveAToCart = "$url/api/remove-a-to-cart";
+const apiRemoveAllCart = "$url/api/empty-cart";
+const apiRemoveProductToCart = "$url/api/remove-from-cart";
+
 
 
 

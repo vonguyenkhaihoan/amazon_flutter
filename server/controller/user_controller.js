@@ -1,85 +1,113 @@
+const {ProductModel} = require("../model/product_model");
 const UserModel = require('../model/user_model');
-const bcryptjs = require('bcryptjs');
-const { json } = require('express');
-const jwt = require('jsonwebtoken');
 
-class UserController {
-  async signup(req, res) {
-    try {
-      // Lấy email, name, password từ giao diện
-      const { name, email, password } = req.body;
 
-      // Kiểm tra email có tồn tại
-      const existingUser = await UserModel.findOne({ email });
-      if (existingUser) {
-        //tra lại ma loi tu phia nguoi dung và thong bao
-        return res.status(400).json({ msg: 'User with same email already exists!' });
-      }
+class UserController{
+    //them san pham
+    async addToCart (req, res) {
+        try {
+            // lấy id từ UI
+            const { id } = req.body;
 
-      // ma hoa mat khau
-      const hasspassword = await bcryptjs.hash(password,8);
+            //tìm san pham theo id
+            const product = await ProductModel.findById(id);
 
-      // Tạo user và lưu vào database
-      const user = new UserModel({
-        email,
-        password: hasspassword,
-        name,
-      });
-      await user.save();
+            // tìm nguoi dung teo id
+            let user = await UserModel.findById(req.user);
+      
+            //kiểm tra gio hang co trống nếu trống thì thêm sản phâm và nguoic lại
+            if (user.cart.length == 0) {
+                user.cart.push({ product, quantity: 1 });
+            } else {
+                //neu gio hang không trong thì chạy vòng lạo giỏ hàng
+                let isProductFound = false;
+                for (let i = 0; i < user.cart.length; i++) {
+                    //nêu tim thay san pham da có trong giỏ hang 
+                    if (user.cart[i].product._id.equals(product._id)) {
+                        isProductFound = true;
+                    }
+                }
+                
+                //nếu san pham da ton tại trong gio hang thì cap nhat lại số luong san pham
+                if (isProductFound) {
+                    let producttt = user.cart.find((productt) =>
+                        productt.product._id.equals(product._id)
+                    );
+                  producttt.quantity += 1;
 
-      // Trả về user đã tạo
-      res.json(user);
-    } catch (e) {
-      res.status(500).json({ error: e.message });
-    }
-  }
-
-  async signin(req, res) {
-    try {
-      // Lấy email, name, password từ giao diện
-      const {  email, password } = req.body;
-
-      // Kiểm tra email có tồn tại
-      const user = await UserModel.findOne({ email });
-      if (!user) {
-        //tra lại ma loi tu phia nguoi dung và thong bao
-        return res.status(400).json({ msg: 'User with email does not exists!' });
-      }
-
-        // Kiểm tra so sanh password co dung voi database khong
-        const isMatch = await bcryptjs.compare(password, user.password);
-        if (!isMatch) {
-          //tra lại ma loi tu phia nguoi dung và thong bao
-          return res.status(400).json({ msg: 'incorect Password' });
+                } else {
+                    //nếu san pham chua ton tại thi them vào
+                    user.cart.push({ product, quantity: 1 });
+                }
+            }
+            user = await user.save();
+            res.json(user);
+        } catch (e) {
+            res.status(500).json({ error: e.message });
         }
+      }
 
-        //xac minh jwt de dam bao dung nguoi dung
-        const token = jwt.sign({id:user._id},"passwordKey");
-        res.json({token,...user._doc})
+    //giam so luong san pham
+    async removeAToCart (req, res) {
+        try {
+            // lấy id từ UI
+            const { id } = req.params;
 
-    } catch (e) {
-      res.status(500).json({ error: e.message });
-    }
-  }
+            //tìm san pham theo id
+            const product = await ProductModel.findById(id);
 
-  //token
-  async token(req, res) {
-    try {
+            // tìm nguoi dung teo id
+            let user = await UserModel.findById(req.user);
+      
+           
+            //neu gio hang không trong thì chạy vòng lạo giỏ hàng
+            for (let i = 0; i < user.cart.length; i++) {
+                if (user.cart[i].product._id.equals(product._id)) {
+                  if (user.cart[i].quantity == 1) {
+                    user.cart.splice(i, 1);
+                  } else {
+                    user.cart[i].quantity -= 1;
+                  }
+                }
+            }              
+            
+            user = await user.save();
+            res.json(user);
+        } catch (e) {
+            res.status(500).json({ error: e.message });
+        }
+      }
 
-      const token = req.header('x-auth-token');
+      //xoa tat ca san pham
+      async removeAllCart (req, res) {
+        try {
+          let user = await UserModel.findById(req.user);
+          user.cart = [];
+          user = await user.save();
+          res.json(user);
+        } catch (e) {
+          res.status(500).json({ error: e.message });
+        }
+      }
 
-      //kiem tra ma token co duoc thong qua hay la null
-      if(!token)  return res.json(false);
-      const verified = jwt.verify(token, "passwordKey");
-      if (!verified) return res.json(false);
-  
-      const user = await UserModel.findById(verified.id);
-      if (!user) return res.json(false);
-      res.json(true);
-    } catch (e) {
-      res.status(500).json({ error: e.message });
-    }
-  }
+      async removeProductToCart(req, res)  {
+        try {
+          const { id } = req.params;
+          const product = await ProductModel.findById(id);
+          let user = await UserModel.findById(req.user);
+      
+          // await user.cart.findOneAndDelete({ product: product });
+          // Xóa sản phẩm khỏi giỏ hàng
+          const cartIndex = user.cart.findIndex(item => item.product._id.toString() === product._id.toString());
+          if (cartIndex !== -1) {
+            user.cart.splice(cartIndex, 1);
+          }
+          user = await user.save();
+          res.json(user);
+        } catch (e) {
+          res.status(500).json({ error: e.message });
+        }
+      }
 }
 
 module.exports = new UserController();

@@ -1,7 +1,10 @@
 import 'package:amazon_flutter/constains/global_variables.dart';
 import 'package:amazon_flutter/features/account/screen/account_screen.dart';
+import 'package:amazon_flutter/features/cart/screens/cart_screen.dart';
 import 'package:amazon_flutter/features/home/screen/home_screen.dart';
+import 'package:amazon_flutter/provider/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BottomBar extends StatefulWidget {
   static const String routeName = '/actual-home';
@@ -20,9 +23,10 @@ class _BottomBarState extends State<BottomBar> {
   List<Widget> pages = [
     const HomeScreen(),
     const AccountScreen(),
-    const Center(child: Text('Cart page')),
+    const CartScreen(),
   ];
 
+  //cap nhap chuyen doi trang
   void updatepage(int page) {
     setState(() {
       _page = page;
@@ -31,6 +35,8 @@ class _BottomBarState extends State<BottomBar> {
 
   @override
   Widget build(BuildContext context) {
+    final userCartLen = context.watch<UserProvider>().user.cart.length;
+
     return Scaffold(
       body: pages[_page],
       bottomNavigationBar: BottomNavigationBar(
@@ -98,7 +104,7 @@ class _BottomBarState extends State<BottomBar> {
                 ),
               ),
               child: Badge(
-                label: Text('4'),
+                label: Text(userCartLen.toString()),
                 textColor: GlobalVariables.selectedNavBarColor,
                 textStyle: TextStyle(fontSize: 13),
                 backgroundColor: Colors.white,

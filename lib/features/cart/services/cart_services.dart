@@ -10,24 +10,21 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
-class ProductDetailsServices {
-  //ham them san pham vao gio hang
-  void addToCart({
+class CartServices {
+  //ham giam so luong san pham
+  void removeAToCart({
     required BuildContext context,
     required Product product,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     try {
-      http.Response res = await http.post(
-        Uri.parse(apiAddToCart),
+      http.Response res = await http.delete(
+        Uri.parse(apiRemoveAToCart + '/${product.id}'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: jsonEncode({
-          'id': product.id!,
-        }),
       );
 
       httpErrorHandle(
@@ -37,8 +34,6 @@ class ProductDetailsServices {
           User user =
               userProvider.user.copyWith(cart: jsonDecode(res.body)['cart']);
           userProvider.setUserFromModel(user);
-          showSnackBar(
-              context, 'Add to Cart successfully!', Colors.green[400]!);
         },
       );
     } catch (e) {
@@ -47,33 +42,63 @@ class ProductDetailsServices {
     }
   }
 
-  //ham danh xep hang san pham
-  void rateProduct({
+  //ham xoa tat ca san pham co trong gio hang
+  void removeAllCart({
     required BuildContext context,
-    required Product product,
-    required double rating,
   }) async {
     final userProvider = Provider.of<UserProvider>(context, listen: false);
 
     try {
-      http.Response res = await http.post(
-        Uri.parse(apirateProducts),
+      http.Response res = await http.delete(
+        Uri.parse(apiRemoveAllCart),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': userProvider.user.token,
         },
-        body: jsonEncode({
-          'id': product.id!,
-          'rating': rating,
-        }),
       );
 
       httpErrorHandle(
         response: res,
         context: context,
         onSuccess: () {
-          // Navigator.pop(context);
-          showSnackBar(context, 'Product review success!', Colors.green[400]!);
+          User user =
+              userProvider.user.copyWith(cart: jsonDecode(res.body)['cart']);
+          userProvider.setUserFromModel(user);
+          showSnackBar(context, 'Xóa thanh công tất cả',
+              Color.fromARGB(255, 161, 117, 113));
+        },
+      );
+    } catch (e) {
+      showSnackBar(
+          context, e.toString(), const Color.fromARGB(255, 161, 117, 113));
+    }
+  }
+
+  //ham xoa san pham chi dinh trong gio hang
+  void removeProductToCart({
+    required BuildContext context,
+    required Product product,
+  }) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    try {
+      http.Response res = await http.delete(
+        Uri.parse(apiRemoveProductToCart + '/${product.id}'),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          User user =
+              userProvider.user.copyWith(cart: jsonDecode(res.body)['cart']);
+          userProvider.setUserFromModel(user);
+          showSnackBar(context, 'Xóa sản phẩm thành công!',
+              const Color.fromARGB(255, 161, 117, 113));
         },
       );
     } catch (e) {

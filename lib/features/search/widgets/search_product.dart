@@ -1,3 +1,4 @@
+import 'package:amazon_flutter/common/widgets/big_text.dart';
 import 'package:amazon_flutter/common/widgets/stars.dart';
 import 'package:amazon_flutter/models/product_model.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +9,22 @@ class SearchProduct extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double totalRating = 0;
+    for (int i = 0; i < product.rating!.length; i++) {
+      totalRating += product.rating![i].rating;
+    }
+    double avgRating = 0;
+    if (totalRating != 0) {
+      avgRating = totalRating / product.rating!.length;
+    }
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 5.0),
           child: Container(
             decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(
                 color: Colors.black,
                 width: 0.5,
@@ -23,19 +34,74 @@ class SearchProduct extends StatelessWidget {
             child: Row(
               children: [
                 // hien hinh anh
-                Image.network(
-                  product.images[0],
-                  fit: BoxFit.cover,
-                  height: 135,
-                  width: 135,
+                Container(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20)),
+                    child: Image.network(
+                      product.images[0],
+                      fit: BoxFit.cover,
+                      height: 135,
+                      width: 135,
+                    ),
+                  ),
                 ),
-                // Image.network(
-                //   product.images[0],
-                //   fit: BoxFit.fitHeight,
-                //   height: 135,
-                //   width: 135,
-                // )
-                Column(
+
+                // Container(
+                //   child: Image.network(
+                //     product.images[0],
+                //     fit: BoxFit.cover,
+                //     height: 135,
+                //     width: 135,
+                //   ),
+                // ),
+
+                Expanded(
+                  child: Container(
+                    // height: Dimension.listViewTextContSize,
+                    // width: 200,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      ),
+                      color: Colors.white,
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.only(left: 10, right: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          BigText(
+                            text: product.name,
+                          ),
+                          SizedBox(height: 5),
+                          Container(
+                            width: 235,
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Stars(
+                              rating: avgRating,
+                            ),
+                          ),
+                          SizedBox(height: 5),
+                          BigText(
+                            text: '\$${product.price}',
+                            color: Colors.redAccent,
+                          ),
+                          BigText(
+                            text: product.description,
+                            size: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                //noi dung
+                /*  Column(
                   children: [
                     Container(
                       width: 235,
@@ -51,8 +117,8 @@ class SearchProduct extends StatelessWidget {
                     Container(
                       width: 235,
                       padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: const Stars(
-                        rating: 4,
+                      child: Stars(
+                        rating: avgRating,
                       ),
                     ),
                     SizedBox(height: 5),
@@ -84,10 +150,11 @@ class SearchProduct extends StatelessWidget {
                     ),
                   ],
                 )
+              */
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }
