@@ -133,6 +133,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             arguments: products![index],
                           );
                         },
+                        
                         child: SearchProduct(
                           product: products![index],
                         ),

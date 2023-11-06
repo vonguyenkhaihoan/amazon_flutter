@@ -1,5 +1,6 @@
 import 'package:amazon_flutter/common/widgets/custom_button.dart';
 import 'package:amazon_flutter/constains/global_variables.dart';
+import 'package:amazon_flutter/features/address/screens/address_screen.dart';
 import 'package:amazon_flutter/features/cart/services/cart_services.dart';
 import 'package:amazon_flutter/features/cart/widgets/cart_product.dart';
 import 'package:amazon_flutter/features/cart/widgets/cart_subtotal.dart';
@@ -24,6 +25,12 @@ class _CartScreenState extends State<CartScreen> {
     Navigator.pushNamed(context, SearchScreen.routeName, arguments: query);
   }
 
+  // ham dieu huong den dia chi
+  void navigateToAddressScreen(int sum) {
+    Navigator.pushNamed(context, AddressScreen.routeName,
+        arguments: sum.toString());
+  }
+
   final CartServices cartServices = CartServices();
 
   //ham xoa tat ca san pham co trong gio hang
@@ -36,6 +43,10 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<UserProvider>().user;
+    int sum = 0;
+    user.cart
+        .map((e) => sum += e['quantity'] * e['product']['price'] as int)
+        .toList();
 
     return Scaffold(
       //app bar
@@ -112,56 +123,6 @@ class _CartScreenState extends State<CartScreen> {
         ),
       ),
 
-      //body
-      // body: SingleChildScrollView(
-      //   child: Column(
-      //     children: [
-      //       // dia chi
-      //       const AddressBox(),
-      //       //tong tien
-      //       const CartSubtotal(),
-      //       //button check out
-      //       Padding(
-      //         padding: const EdgeInsets.all(8.0),
-      //         child: CustomButton(
-      //           text: 'Proceed to Buy (${user.cart.length} items)',
-      //           onTap: () {} /*() => navigateToAddress(sum)*/,
-      //           color: Colors.yellow[600],
-      //         ),
-      //       ),
-      //       // const SizedBox(height: 15),
-      //       // const SizedBox(height: 0),
-
-      //       //button remove all product to cart
-      //       Padding(
-      //         padding: const EdgeInsets.all(8.0),
-      //         child: CustomButton(
-      //           text: 'Remove all (${user.cart.length} items)',
-      //           onTap: () => RemoveAllCart(),
-      //           color: Colors.yellow[600],
-      //         ),
-      //       ),
-      //       const SizedBox(height: 15),
-
-      //       //
-      //       Container(
-      //         color: Colors.black12.withOpacity(0.08),
-      //         height: 1,
-      //       ),
-      //       const SizedBox(height: 5),
-
-      //       //danh sach san phan trong gio hang
-      //       ListView.builder(
-      //         itemCount: user.cart.length,
-      //         shrinkWrap: true,
-      //         itemBuilder: (context, index) {
-      //           return CartProduct(index: index);
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
-
       //khoong su dung Singscroll
       body: Column(
         children: [
@@ -174,7 +135,14 @@ class _CartScreenState extends State<CartScreen> {
             padding: const EdgeInsets.all(8.0),
             child: CustomButton(
               text: 'Proceed to Buy (${user.cart.length} items)',
-              onTap: () {} /*() => navigateToAddress(sum)*/,
+              // onTap: ()=>navigateToAddressScreen(sum),
+              onTap: () {
+                if (user.cart.isNotEmpty) {
+                  return navigateToAddressScreen(sum);
+                } else {
+                  return null;
+                }
+              },
               color: Colors.yellow[600],
             ),
           ),

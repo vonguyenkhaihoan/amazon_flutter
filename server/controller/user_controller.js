@@ -1,5 +1,6 @@
 const {ProductModel} = require("../model/product_model");
 const UserModel = require('../model/user_model');
+const OrderModel = require('../model/order_model');
 
 
 class UserController{
@@ -104,6 +105,70 @@ class UserController{
           }
           user = await user.save();
           res.json(user);
+        } catch (e) {
+          res.status(500).json({ error: e.message });
+        }
+      }
+
+      //save user address
+      async saveUserAddress (req, res)  {
+        try {
+          const { address } = req.body;
+          let user = await UserModel.findById(req.user);
+          user.address = address;
+          user = await user.save();
+          res.json(user);
+        } catch (e) {
+          res.status(500).json({ error: e.message });
+        }
+      }
+
+      //order product
+      async OrderProduct (req, res)  {
+        try {
+          //lay gio hang , tong gia, dia chi tu UI
+          const { cart, totalPrice, address } = req.body;
+
+          let products = [];
+      
+          for (let i = 0; i < cart.length; i++) {
+            //tim san pham theo id san pham trong gio hang va luu vao bien product
+            let product = await ProductModel.findById(cart[i].product._id);
+            
+            if (product.quantity >= cart[i].quantity) {
+              product.quantity -= cart[i].quantity;
+              products.push({ product, quantity: cart[i].quantity });
+              await product.save();
+            } else {
+              return res
+                .status(400)
+                .json({ msg: `${product.name} is out of stock!` });
+            }
+          }
+      
+          let user = await UserModel.findById(req.user);
+          user.cart = [];
+          user = await user.save();
+      
+          let order = new OrderModel({
+            products,
+            totalPrice,
+            address,
+            userId: req.user,
+            orderedAt: new Date().getTime(),
+          });
+          order = await order.save();
+          res.json(order);
+        } catch (e) {
+          res.status(500).json({ error: e.message });
+        }
+      }
+
+      //my order
+      async MyOrder (req, res)  {
+        try {
+          const orders = await OrderModel.find({ userId: req.user });
+          res.json(orders);
         } catch (e) {
           res.status(500).json({ error: e.message });
         }

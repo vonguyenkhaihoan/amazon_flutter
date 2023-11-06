@@ -16,6 +16,15 @@ const apiAddToCart = "$url/api/add-to-cart";
 const apiRemoveAToCart = "$url/api/remove-a-to-cart";
 const apiRemoveAllCart = "$url/api/empty-cart";
 const apiRemoveProductToCart = "$url/api/remove-from-cart";
+const apiSaveUserAddress = "$url/api/save-user-address";
+
+//orderproduct
+const apiOrderProduct = "$url/api/order";
+const apiMyOrder = "$url/api/orders/me";
+
+
+
+
 
 
 

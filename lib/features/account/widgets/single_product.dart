@@ -30,3 +30,4 @@ class SingleProduct extends StatelessWidget {
     );
   }
 }
+
