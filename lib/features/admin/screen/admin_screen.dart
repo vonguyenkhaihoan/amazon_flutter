@@ -1,4 +1,5 @@
 import 'package:amazon_flutter/constains/global_variables.dart';
+import 'package:amazon_flutter/features/admin/screen/order_screen.dart';
 import 'package:amazon_flutter/features/admin/screen/post_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,7 @@ class _AdminScreemState extends State<AdminScreem> {
   List<Widget> pages = [
     const PostScren(),
     const Center(child: Text('Anakytics page')),
-    const Center(child: Text('Cart page')),
+    const OrderScreen(),
   ];
 
   void updatepage(int page) {

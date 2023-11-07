@@ -1,4 +1,4 @@
-const url = 'http://192.168.1.5:3000';
+const url = 'http://192.168.1.11:3000';
 
 const signup = "$url/api/signup";
 const signin = "$url/api/signin";
@@ -23,16 +23,14 @@ const apiOrderProduct = "$url/api/order";
 const apiMyOrder = "$url/api/orders/me";
 
 
-
-
-
-
-
-
 //admin
 const addProduct = "$url/admin/add-product";
 const getAllProduct = "$url/admin/get-products";
 const deleteProducts = "$url/admin/delete-product";
+const getAllOrder = "$url/admin/get-orders";
+const changeStatusOrder = "$url/admin/change-order-status";
+
+
 
 
 // 

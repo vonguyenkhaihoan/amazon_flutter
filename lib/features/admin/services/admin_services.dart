@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:amazon_flutter/config/config.dart';
 import 'package:amazon_flutter/constains/error_handling.dart';
 import 'package:amazon_flutter/constains/utils.dart';
+import 'package:amazon_flutter/models/order_model.dart';
 import 'package:amazon_flutter/models/product_model.dart';
 import 'package:amazon_flutter/provider/user_provider.dart';
 import 'package:cloudinary_public/cloudinary_public.dart';
@@ -176,6 +177,77 @@ class AdminServices {
         },
         body: jsonEncode({
           'id': product.id,
+        }),
+      );
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          onSuccess();
+        },
+      );
+    } catch (e) {
+      showSnackBar(
+          context, e.toString(), const Color.fromARGB(255, 161, 117, 113));
+    }
+  }
+
+  //get all order
+  Future<List<Order>> fetchAllOrders(BuildContext context) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    //tao bien luu danh sach san pham
+    List<Order> orderList = [];
+
+    try {
+      http.Response res = await http.get(Uri.parse(getAllOrder), headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'x-auth-token': userProvider.user.token,
+      });
+
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          //chay vong lap san pham lays tudb
+          for (int i = 0; i < jsonDecode(res.body).length; i++) {
+            //them vao danh sach san pham
+            orderList.add(
+              Order.fromJson(
+                jsonEncode(
+                  jsonDecode(res.body)[i],
+                ),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString(), Colors.red);
+    }
+    return orderList;
+  }
+
+  //change status order
+  void changeOrderStatus({
+    required BuildContext context,
+    required int status,
+    required Order order,
+    required VoidCallback onSuccess,
+  }) async {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+
+    try {
+      http.Response res = await http.post(
+        Uri.parse(changeStatusOrder),
+        headers: {
+          'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': userProvider.user.token,
+        },
+        body: jsonEncode({
+          'id': order.id,
+          'status': status
         }),
       );
 

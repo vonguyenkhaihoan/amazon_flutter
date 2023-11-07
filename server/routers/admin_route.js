@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const AdminMidd = require("../middlewares/admin_middle");
 const {ProductModel} = require("../model/product_model");
+const OrderModel = require("../model/order_model");
 
 // const AdminController = require("../controller/admin_controller");
 
@@ -36,6 +37,15 @@ router.get("/admin/get-products", AdminMidd , async (req, res) => {
   }
 });
 
+router.get("/admin/get-orders", AdminMidd, async (req, res) => {
+  try {
+    const orders = await OrderModel.find({});
+    res.json(orders);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 
 // Delete the product
 router.post("/admin/delete-product", AdminMidd , async (req, res) => {
@@ -46,11 +56,27 @@ router.post("/admin/delete-product", AdminMidd , async (req, res) => {
     //timf vao xoa san pham theo ID
     let product = await ProductModel.findByIdAndDelete(id);
 
-    // //luu vao db
-    // product = await product.save();
-
     //phan hoi nguoi dung
     res.json(product);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// change status Order
+router.post("/admin/change-order-status", AdminMidd , async (req, res) => {
+  try {
+    //lay id san pham tu UI
+    const { id , status} = req.body;
+
+    //timf vao xoa san pham theo ID
+    // let order = await OrderModel.findById(id);
+    // order.status = status
+    let order = await OrderModel.findByIdAndUpdate(id, { status });
+
+    order = await order.save();
+    //phan hoi nguoi dung
+    res.json(order);
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
