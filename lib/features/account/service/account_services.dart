@@ -3,11 +3,13 @@ import 'dart:convert';
 import 'package:amazon_flutter/config/config.dart';
 import 'package:amazon_flutter/constains/error_handling.dart';
 import 'package:amazon_flutter/constains/utils.dart';
+import 'package:amazon_flutter/features/auth/screens/auth_screen.dart';
 import 'package:amazon_flutter/models/order_model.dart';
 import 'package:amazon_flutter/provider/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AccountServices {
   //lay danh don hang
@@ -42,5 +44,21 @@ class AccountServices {
       showSnackBar(context, e.toString(),Colors.white);
     }
     return orderList;
+  }
+
+  //log out
+   void logOut(BuildContext context) async {
+    try {
+      SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+      await sharedPreferences.setString('x-auth-token', '');
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AuthScreen.routeName,
+        (route) => false,
+      );
+    } catch (e) {
+      showSnackBar(context, e.toString(),Colors.red[300]!);
+    }
   }
 }

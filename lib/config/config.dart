@@ -29,7 +29,7 @@ const getAllProduct = "$url/admin/get-products";
 const deleteProducts = "$url/admin/delete-product";
 const getAllOrder = "$url/admin/get-orders";
 const changeStatusOrder = "$url/admin/change-order-status";
-
+const getAnalytics = "$url/admin/analytics";
 
 
 

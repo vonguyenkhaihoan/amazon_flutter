@@ -6,7 +6,7 @@ import 'package:amazon_flutter/constains/utils.dart';
 import 'package:amazon_flutter/features/address/services/address_services.dart';
 import 'package:amazon_flutter/provider/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:pay/pay.dart';
+// import 'package:pay/pay.dart';
 import 'package:provider/provider.dart';
 
 class AddressScreen extends StatefulWidget {
@@ -28,20 +28,20 @@ class _AddressScreenState extends State<AddressScreen> {
   //địa chỉ được sửa dụng
   String addressToBeUsed = "";
   //san pham thanh toan
-  List<PaymentItem> paymentItems = [];
+  // List<PaymentItem> paymentItems = [];
   //address services
   final AddressServices addressServices = AddressServices();
 
   @override
   void initState() {
     super.initState();
-    paymentItems.add(
-      PaymentItem(
-        amount: widget.totalAmount,
-        label: 'Total Amount',
-        status: PaymentItemStatus.final_price,
-      ),
-    );
+    // paymentItems.add(
+    //   PaymentItem(
+    //     amount: widget.totalAmount,
+    //     label: 'Total Amount',
+    //     status: PaymentItemStatus.final_price,
+    //   ),
+    // );
   }
 
   @override
@@ -173,7 +173,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 ),
               ),
 
-              //applepay
+              /*//applepay
               ApplePayButton(
                 width: double.infinity,
                 style: ApplePayButtonStyle.whiteOutline,
@@ -200,7 +200,7 @@ class _AddressScreenState extends State<AddressScreen> {
                 loadingIndicator: const Center(
                   child: CircularProgressIndicator(),
                 ),
-              ),
+              ),*/
 
               //button check out
               Padding(
